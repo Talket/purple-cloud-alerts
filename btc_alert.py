@@ -45,7 +45,17 @@ lower_band = hl2 - factor * atr
 final_upper = upper_band.copy()
 final_lower = lower_band.copy()
 
-for i in range(1, len(btc)):
+# Find first valid ATR value
+first_valid = atr.first_valid_index()
+start = btc.index.get_loc(first_valid)
+
+# Initialize values before calculations begin
+for i in range(start + 1):
+    final_upper.iloc[i] = upper_band.iloc[i]
+    final_lower.iloc[i] = lower_band.iloc[i]
+
+# Calculate final bands
+for i in range(start + 1, len(btc)):
 
     if (
         upper_band.iloc[i] < final_upper.iloc[i - 1]
@@ -69,9 +79,9 @@ for i in range(1, len(btc)):
 
 direction = pd.Series(index=btc.index, dtype=int)
 
-direction.iloc[0] = 1
+direction.iloc[: start + 1] = 1
 
-for i in range(1, len(btc)):
+for i in range(start + 1, len(btc)):
 
     if close.iloc[i] > final_upper.iloc[i - 1]:
         direction.iloc[i] = 1
@@ -82,7 +92,12 @@ for i in range(1, len(btc)):
     else:
         direction.iloc[i] = direction.iloc[i - 1]
 
+# =========================
+# Output
+# =========================
+
 print("Price:", round(close.iloc[-1], 2))
+print("ATR10:", round(atr.iloc[-1], 2))
 print("Direction:", int(direction.iloc[-1]))
 print("Final Upper:", round(final_upper.iloc[-1], 2))
 print("Final Lower:", round(final_lower.iloc[-1], 2))
