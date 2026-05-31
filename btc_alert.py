@@ -318,3 +318,14 @@ if len(short_rows) > 0:
             "EMA200:",
             round(ema200.loc[idx], 2)
         )
+
+latest_buy = buy_above_ema[buy_above_ema].index
+latest_short = short_below_ema[short_below_ema].index
+
+print("\n===== LATEST FILTERED SIGNALS =====")
+
+if len(latest_buy):
+    print("Last BUY:", latest_buy[-1])
+
+if len(latest_short):
+    print("Last SHORT:", latest_short[-1])
