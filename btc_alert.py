@@ -325,6 +325,51 @@ if len(short_rows) > 0:
 latest_buy = buy_above_ema[buy_above_ema].index
 latest_short = short_below_ema[short_below_ema].index
 
+# =========================
+# Latest Signal
+# =========================
+
+latest_signal = None
+latest_timestamp = None
+
+if len(latest_buy):
+    latest_signal = "BUY"
+    latest_timestamp = latest_buy[-1]
+
+if len(latest_short):
+    if latest_timestamp is None or latest_short[-1] > latest_timestamp:
+        latest_signal = "SHORT"
+        latest_timestamp = latest_short[-1]
+
+print("Latest Signal:", latest_signal)
+print("Latest Timestamp:", latest_timestamp)
+
+# =========================
+# Load Previous State
+# =========================
+
+with open("signal_state.json", "r") as f:
+    state = json.load(f)
+
+last_signal = state.get("last_signal", "")
+last_timestamp = state.get("last_timestamp", "")
+
+print("Stored Signal:", last_signal)
+print("Stored Timestamp:", last_timestamp)
+
+# =========================
+# New Signal Check
+# =========================
+
+new_signal = False
+
+if latest_signal is not None:
+
+    if str(latest_timestamp) != last_timestamp:
+        new_signal = True
+
+print("New Signal:", new_signal)
+
 print("\n===== LATEST FILTERED SIGNALS =====")
 
 if len(latest_buy):
