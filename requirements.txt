@@ -3,4 +3,3 @@ pandas
 ccxt
 numpy
 yfinance
-pandas-ta
