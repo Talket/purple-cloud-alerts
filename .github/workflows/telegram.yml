@@ -2,7 +2,7 @@ name: Telegram Test
 
 on:
   schedule:
-  - cron: "0 */2 * * *"
+    - cron: "0 */2 * * *"
 
   workflow_dispatch:
 
@@ -13,34 +13,34 @@ jobs:
   send-message:
     runs-on: ubuntu-latest
 
-steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-      persist-credentials: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-      python-version: "3.11"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-    - name: Install dependencies
-      run: pip install -r requirements.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
-    - name: Run script
-      env:
-        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-        CHAT_ID: ${{ secrets.CHAT_ID }}
-      run: python btc_alert.py
+      - name: Run script
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+        run: python btc_alert.py
 
-    - name: Commit state file
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Commit state file
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-        git add signal_state.json
+          git add signal_state.json
 
-        git diff --cached --quiet || git commit -m "Update signal state"
+          git diff --cached --quiet || git commit -m "Update signal state"
 
-    - name: Push changes
-      run: git push
+      - name: Push changes
+        run: git push
