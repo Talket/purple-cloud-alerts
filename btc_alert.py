@@ -377,3 +377,26 @@ if len(latest_buy):
 
 if len(latest_short):
     print("Last SHORT:", latest_short[-1])
+
+
+if new_signal:
+
+    BOT_TOKEN = os.getenv("BOT_TOKEN")
+    CHAT_ID = os.getenv("CHAT_ID")
+
+    message = (
+        f"🚀 Purple Cloud Alert\n\n"
+        f"Signal: {latest_signal}\n"
+        f"Price: {round(close.iloc[-1], 2)}\n"
+        f"Time: {latest_timestamp}"
+    )
+
+    requests.post(
+        f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+        data={
+            "chat_id": CHAT_ID,
+            "text": message
+        }
+    )
+
+    print("Telegram alert sent")
