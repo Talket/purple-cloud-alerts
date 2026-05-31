@@ -16,7 +16,7 @@ low = btc["Low"]
 close = btc["Close"]
 
 # =========================
-# ATR 10
+# ATR(10)
 # =========================
 
 tr1 = high - low
@@ -27,10 +27,19 @@ tr = pd.concat([tr1, tr2, tr3], axis=1).max(axis=1)
 
 atr = tr.rolling(10).mean()
 
-btc["ATR10"] = atr
+# =========================
+# Basic Bands
+# =========================
+
+factor = 3.0
+
+hl2 = (high + low) / 2
+
+upper_band = hl2 + factor * atr
+lower_band = hl2 - factor * atr
 
 # =========================
-# Final Supertrend Bands
+# Final Bands
 # =========================
 
 final_upper = upper_band.copy()
@@ -54,9 +63,6 @@ for i in range(1, len(btc)):
     else:
         final_lower.iloc[i] = final_lower.iloc[i - 1]
 
-btc["FinalUpper"] = final_upper
-btc["FinalLower"] = final_lower
-
 # =========================
 # Direction
 # =========================
@@ -75,8 +81,6 @@ for i in range(1, len(btc)):
 
     else:
         direction.iloc[i] = direction.iloc[i - 1]
-
-btc["Direction"] = direction
 
 print("Price:", round(close.iloc[-1], 2))
 print("Direction:", int(direction.iloc[-1]))
