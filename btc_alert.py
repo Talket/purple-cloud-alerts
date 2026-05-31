@@ -248,86 +248,12 @@ short_below_ema = (
     short_condition
     & (close < ema200)
 )
-
-# =========================
-# Output
-# =========================
-
-print("Price:", round(close.iloc[-1], 2))
-print("EMA200:", round(ema200.iloc[-1], 2))
-
-print("Direction:", int(direction.iloc[-1]))
-print("Supertrend:", round(supertrend.iloc[-1], 2))
-
-print("a5:", round(a5.iloc[-1], 2))
-print("b1:", round(b1.iloc[-1], 2))
-
-print("xh:", round(xh.iloc[-1], 2))
-print("xl:", round(xl.iloc[-1], 2))
-
-print("Buy:", bool(buy.iloc[-1]))
-print("Sell:", bool(sell.iloc[-1]))
-
-print("XS:", int(xs.iloc[-1]))
-
-print("Long Condition:", bool(long_condition.iloc[-1]))
-print("Short Condition:", bool(short_condition.iloc[-1]))
-
-print("BUY Above EMA200:", bool(buy_above_ema.iloc[-1]))
-print("SHORT Below EMA200:", bool(short_below_ema.iloc[-1]))
-
-print("Direction value:", direction.iloc[-1])
-
-print("\n===== SIGNAL COUNT =====")
-
-print("Long signals:",
-      int(long_condition.sum()))
-
-print("Short signals:",
-      int(short_condition.sum()))
-
-print("Buy Above EMA200:",
-      int(buy_above_ema.sum()))
-
-print("Short Below EMA200:",
-      int(short_below_ema.sum()))
-
-
-print("\n===== LONG SIGNALS =====")
-
-long_rows = btc[long_condition]
-
-for idx in long_rows.index[-5:]:
-    print(
-        idx,
-        "Close:",
-        round(close.loc[idx], 2),
-        "EMA200:",
-        round(ema200.loc[idx], 2),
-        "Direction:",
-        direction.loc[idx]
-    )
-
-print("\n===== SHORT SIGNALS =====")
-
-short_rows = btc[short_condition]
-
-if len(short_rows) > 0:
-    for idx in short_rows.index[-5:]:
-        print(
-            idx,
-            "Close:",
-            round(close.loc[idx], 2),
-            "EMA200:",
-            round(ema200.loc[idx], 2)
-        )
-
-latest_buy = buy_above_ema[buy_above_ema].index
-latest_short = short_below_ema[short_below_ema].index
-
 # =========================
 # Latest Signal
 # =========================
+
+latest_buy = buy_above_ema[buy_above_ema].index
+latest_short = short_below_ema[short_below_ema].index
 
 latest_signal = None
 latest_timestamp = None
@@ -341,9 +267,6 @@ if len(latest_short):
         latest_signal = "SHORT"
         latest_timestamp = latest_short[-1]
 
-print("Latest Signal:", latest_signal)
-print("Latest Timestamp:", latest_timestamp)
-
 # =========================
 # Load Previous State
 # =========================
@@ -354,9 +277,6 @@ with open("signal_state.json", "r") as f:
 last_signal = state.get("last_signal", "")
 last_timestamp = state.get("last_timestamp", "")
 
-print("Stored Signal:", last_signal)
-print("Stored Timestamp:", last_timestamp)
-
 # =========================
 # New Signal Check
 # =========================
@@ -364,20 +284,20 @@ print("Stored Timestamp:", last_timestamp)
 new_signal = False
 
 if latest_signal is not None:
-
     if str(latest_timestamp) != last_timestamp:
         new_signal = True
 
+print("Latest Signal:", latest_signal)
+print("Latest Timestamp:", latest_timestamp)
+
+print("Stored Signal:", last_signal)
+print("Stored Timestamp:", last_timestamp)
+
 print("New Signal:", new_signal)
 
-print("\n===== LATEST FILTERED SIGNALS =====")
-
-if len(latest_buy):
-    print("Last BUY:", latest_buy[-1])
-
-if len(latest_short):
-    print("Last SHORT:", latest_short[-1])
-
+# =========================
+# Telegram Alert
+# =========================
 
 if new_signal:
 
@@ -401,16 +321,19 @@ if new_signal:
 
     print("Telegram alert sent")
 
-with open("signal_state.json", "w") as f:
-    json.dump(
-        {
-            "last_signal": latest_signal,
-            "last_timestamp": str(latest_timestamp)
-        },
-        f,
-        indent=2
-    )
+    with open("signal_state.json", "w") as f:
+        json.dump(
+            {
+                "last_signal": latest_signal,
+                "last_timestamp": str(latest_timestamp)
+            },
+            f,
+            indent=2
+        )
 
-print("State file updated")
+    print("State file updated")
+
+else:
+    print("No new signal")
 
 
