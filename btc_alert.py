@@ -273,6 +273,7 @@ print("Short Condition:", bool(short_condition.iloc[-1]))
 print("BUY Above EMA200:", bool(buy_above_ema.iloc[-1]))
 print("SHORT Below EMA200:", bool(short_below_ema.iloc[-1]))
 
+print("Direction value:", direction.iloc[-1])
 
 print("\n===== SIGNAL COUNT =====")
 
@@ -293,15 +294,16 @@ print("\n===== LONG SIGNALS =====")
 
 long_rows = btc[long_condition]
 
-if len(long_rows) > 0:
-    for idx in long_rows.index[-5:]:
-        print(
-            idx,
-            "Close:",
-            round(close.loc[idx], 2),
-            "EMA200:",
-            round(ema200.loc[idx], 2)
-        )
+for idx in long_rows.index[-5:]:
+    print(
+        idx,
+        "Close:",
+        round(close.loc[idx], 2),
+        "EMA200:",
+        round(ema200.loc[idx], 2),
+        "Direction:",
+        direction.loc[idx]
+    )
 
 print("\n===== SHORT SIGNALS =====")
 
