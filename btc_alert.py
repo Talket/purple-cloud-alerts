@@ -5,9 +5,9 @@ import ccxt
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 
-exchange = ccxt.binance()
+exchange = ccxt.bybit()
 
-ticker = exchange.fetch_ticker("BTC/USDT")
+ticker = exchange.fetch_ticker("BTCUSDT")
 price = ticker["last"]
 
 message = f"BTC Price: ${price}"
