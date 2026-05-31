@@ -287,3 +287,32 @@ print("Buy Above EMA200:",
 
 print("Short Below EMA200:",
       int(short_below_ema.sum()))
+
+
+print("\n===== LONG SIGNALS =====")
+
+long_rows = btc[long_condition]
+
+if len(long_rows) > 0:
+    for idx in long_rows.index[-5:]:
+        print(
+            idx,
+            "Close:",
+            round(close.loc[idx], 2),
+            "EMA200:",
+            round(ema200.loc[idx], 2)
+        )
+
+print("\n===== SHORT SIGNALS =====")
+
+short_rows = btc[short_condition]
+
+if len(short_rows) > 0:
+    for idx in short_rows.index[-5:]:
+        print(
+            idx,
+            "Close:",
+            round(close.loc[idx], 2),
+            "EMA200:",
+            round(ema200.loc[idx], 2)
+        )
