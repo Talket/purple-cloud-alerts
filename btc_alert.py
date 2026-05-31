@@ -93,11 +93,26 @@ for i in range(start + 1, len(btc)):
         direction.iloc[i] = direction.iloc[i - 1]
 
 # =========================
+# Supertrend Line
+# =========================
+
+supertrend = pd.Series(index=btc.index, dtype=float)
+
+for i in range(len(btc)):
+    if direction.iloc[i] == 1:
+        supertrend.iloc[i] = final_lower.iloc[i]
+    else:
+        supertrend.iloc[i] = final_upper.iloc[i]
+
+btc["Supertrend"] = supertrend
+
+# =========================
 # Output
 # =========================
 
 print("Price:", round(close.iloc[-1], 2))
 print("ATR10:", round(atr.iloc[-1], 2))
 print("Direction:", int(direction.iloc[-1]))
+print("Supertrend:", round(supertrend.iloc[-1], 2))
 print("Final Upper:", round(final_upper.iloc[-1], 2))
 print("Final Lower:", round(final_lower.iloc[-1], 2))
