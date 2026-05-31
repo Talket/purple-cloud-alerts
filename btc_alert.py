@@ -4,7 +4,7 @@ import numpy as np
 
 btc = yf.download(
     "BTC-USD",
-    period="30d",
+    period="120d",
     interval="1h",
     auto_adjust=True
 )
