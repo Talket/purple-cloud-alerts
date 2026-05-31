@@ -272,3 +272,18 @@ print("Short Condition:", bool(short_condition.iloc[-1]))
 
 print("BUY Above EMA200:", bool(buy_above_ema.iloc[-1]))
 print("SHORT Below EMA200:", bool(short_below_ema.iloc[-1]))
+
+
+print("\n===== SIGNAL COUNT =====")
+
+print("Long signals:",
+      int(long_condition.sum()))
+
+print("Short signals:",
+      int(short_condition.sum()))
+
+print("Buy Above EMA200:",
+      int(buy_above_ema.sum()))
+
+print("Short Below EMA200:",
+      int(short_below_ema.sum()))
