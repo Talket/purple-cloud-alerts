@@ -179,24 +179,96 @@ b1 = close.ewm(alpha=(1 / x1), adjust=False).mean()
 a5 = (2 * a4 * b1) / (a4 + b1)
 
 # =========================
+# Purple Cloud Signals
+# =========================
+
+bpt = 0.5
+spt = 0.5
+
+buy = (
+    (a5 <= xl)
+    & (close > b1 * (1 + bpt * 0.01))
+)
+
+sell = (
+    (a5 >= xh)
+    & (close < b1 * (1 - spt * 0.01))
+)
+
+# =========================
+# XS State
+# =========================
+
+xs = pd.Series(index=btc.index, dtype=int)
+
+xs.iloc[0] = 0
+
+for i in range(1, len(btc)):
+
+    if buy.iloc[i]:
+        xs.iloc[i] = 1
+
+    elif sell.iloc[i]:
+        xs.iloc[i] = -1
+
+    else:
+        xs.iloc[i] = xs.iloc[i - 1]
+
+# =========================
+# Long / Short Conditions
+# =========================
+
+xs_prev = xs.shift(1)
+
+long_condition = (
+    buy
+    & (xs != xs_prev)
+    & (direction < 0)
+)
+
+short_condition = (
+    sell
+    & (xs != xs_prev)
+    & (direction > 0)
+)
+
+# =========================
+# EMA200 Filter
+# =========================
+
+buy_above_ema = (
+    long_condition
+    & (close > ema200)
+)
+
+short_below_ema = (
+    short_condition
+    & (close < ema200)
+)
+
+# =========================
 # Output
 # =========================
 
 print("Price:", round(close.iloc[-1], 2))
-print("ATR10:", round(atr.iloc[-1], 2))
+print("EMA200:", round(ema200.iloc[-1], 2))
+
 print("Direction:", int(direction.iloc[-1]))
 print("Supertrend:", round(supertrend.iloc[-1], 2))
-print("Final Upper:", round(final_upper.iloc[-1], 2))
-print("Final Lower:", round(final_lower.iloc[-1], 2))
 
-print("Price:", round(close.iloc[-1], 2))
-print("EMA200:", round(ema200.iloc[-1], 2))
-print("ATR40:", round(atr40.iloc[-1], 2))
+print("a5:", round(a5.iloc[-1], 2))
+print("b1:", round(b1.iloc[-1], 2))
 
-print("a1:", a1.iloc[-1])
-print("a2:", a2.iloc[-1])
-print("a3:", a3.iloc[-1])
-print("a4:", a4.iloc[-1])
-print("a5:", a5.iloc[-1])
+print("xh:", round(xh.iloc[-1], 2))
+print("xl:", round(xl.iloc[-1], 2))
 
-print("b1:", b1.iloc[-1])
+print("Buy:", bool(buy.iloc[-1]))
+print("Sell:", bool(sell.iloc[-1]))
+
+print("XS:", int(xs.iloc[-1]))
+
+print("Long Condition:", bool(long_condition.iloc[-1]))
+print("Short Condition:", bool(short_condition.iloc[-1]))
+
+print("BUY Above EMA200:", bool(buy_above_ema.iloc[-1]))
+print("SHORT Below EMA200:", bool(short_below_ema.iloc[-1]))
