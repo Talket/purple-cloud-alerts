@@ -1,1 +1,4 @@
 requests
+pandas
+ccxt
+numpy
