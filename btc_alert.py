@@ -1,25 +1,16 @@
-import os
 import requests
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-CHAT_ID = os.getenv("CHAT_ID")
+url = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart"
 
-data = requests.get(
-    "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"
-).json()
+params = {
+    "vs_currency": "usd",
+    "days": "7",
+    "interval": "hourly"
+}
 
-price = data["bitcoin"]["usd"]
+data = requests.get(url, params=params).json()
 
-message = f"BTC Price: ${price}"
+prices = data["prices"]
 
-url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-
-requests.post(
-    url,
-    data={
-        "chat_id": CHAT_ID,
-        "text": message
-    }
-)
-
-print(message)
+print(f"Downloaded {len(prices)} candles")
+print(prices[-1])
