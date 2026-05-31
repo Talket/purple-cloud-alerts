@@ -30,20 +30,55 @@ atr = tr.rolling(10).mean()
 btc["ATR10"] = atr
 
 # =========================
-# Supertrend Basic Bands
+# Final Supertrend Bands
 # =========================
 
-factor = 3.0
+final_upper = upper_band.copy()
+final_lower = lower_band.copy()
 
-hl2 = (high + low) / 2
+for i in range(1, len(btc)):
 
-upper_band = hl2 + factor * atr
-lower_band = hl2 - factor * atr
+    if (
+        upper_band.iloc[i] < final_upper.iloc[i - 1]
+        or close.iloc[i - 1] > final_upper.iloc[i - 1]
+    ):
+        final_upper.iloc[i] = upper_band.iloc[i]
+    else:
+        final_upper.iloc[i] = final_upper.iloc[i - 1]
 
-btc["UpperBand"] = upper_band
-btc["LowerBand"] = lower_band
+    if (
+        lower_band.iloc[i] > final_lower.iloc[i - 1]
+        or close.iloc[i - 1] < final_lower.iloc[i - 1]
+    ):
+        final_lower.iloc[i] = lower_band.iloc[i]
+    else:
+        final_lower.iloc[i] = final_lower.iloc[i - 1]
+
+btc["FinalUpper"] = final_upper
+btc["FinalLower"] = final_lower
+
+# =========================
+# Direction
+# =========================
+
+direction = pd.Series(index=btc.index, dtype=int)
+
+direction.iloc[0] = 1
+
+for i in range(1, len(btc)):
+
+    if close.iloc[i] > final_upper.iloc[i - 1]:
+        direction.iloc[i] = 1
+
+    elif close.iloc[i] < final_lower.iloc[i - 1]:
+        direction.iloc[i] = -1
+
+    else:
+        direction.iloc[i] = direction.iloc[i - 1]
+
+btc["Direction"] = direction
 
 print("Price:", round(close.iloc[-1], 2))
-print("ATR10:", round(atr.iloc[-1], 2))
-print("Upper Band:", round(upper_band.iloc[-1], 2))
-print("Lower Band:", round(lower_band.iloc[-1], 2))
+print("Direction:", int(direction.iloc[-1]))
+print("Final Upper:", round(final_upper.iloc[-1], 2))
+print("Final Lower:", round(final_lower.iloc[-1], 2))
