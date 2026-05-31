@@ -159,7 +159,9 @@ a3 = 2 * a1 - a2
 
 # a4 = vwma(a3,40)
 
-a4_num = (a3 * volume).rolling(x1).sum()
+a3_filled = a3.ffill()
+
+a4_num = (a3_filled * volume).rolling(x1).sum()
 a4_den = volume.rolling(x1).sum()
 
 a4 = a4_num / a4_den
@@ -187,13 +189,14 @@ print("Supertrend:", round(supertrend.iloc[-1], 2))
 print("Final Upper:", round(final_upper.iloc[-1], 2))
 print("Final Lower:", round(final_lower.iloc[-1], 2))
 
+print("Price:", round(close.iloc[-1], 2))
 print("EMA200:", round(ema200.iloc[-1], 2))
 print("ATR40:", round(atr40.iloc[-1], 2))
-print("a5:", round(a5.iloc[-1], 2))
-print("b1:", round(b1.iloc[-1], 2))
 
 print("a1:", a1.iloc[-1])
 print("a2:", a2.iloc[-1])
 print("a3:", a3.iloc[-1])
 print("a4:", a4.iloc[-1])
 print("a5:", a5.iloc[-1])
+
+print("b1:", b1.iloc[-1])
