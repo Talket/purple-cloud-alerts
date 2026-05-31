@@ -1,5 +1,6 @@
 import yfinance as yf
 import pandas as pd
+import numpy as np
 
 btc = yf.download(
     "BTC-USD",
@@ -10,15 +11,17 @@ btc = yf.download(
 
 btc.columns = btc.columns.get_level_values(0)
 
-btc["EMA200"] = btc["Close"].ewm(span=200).mean()
+high = btc["High"]
+low = btc["Low"]
+close = btc["Close"]
 
-price = btc["Close"].iloc[-1]
-ema200 = btc["EMA200"].iloc[-1]
+tr1 = high - low
+tr2 = abs(high - close.shift(1))
+tr3 = abs(low - close.shift(1))
 
-print("Price:", round(price, 2))
-print("EMA200:", round(ema200, 2))
+tr = pd.concat([tr1, tr2, tr3], axis=1).max(axis=1)
 
-if price > ema200:
-    print("ABOVE EMA200")
-else:
-    print("BELOW EMA200")
+btc["ATR40"] = tr.rolling(40).mean()
+
+print("Price:", round(close.iloc[-1], 2))
+print("ATR40:", round(btc["ATR40"].iloc[-1], 2))
