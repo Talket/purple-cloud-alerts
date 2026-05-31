@@ -106,6 +106,76 @@ for i in range(len(btc)):
 
 btc["Supertrend"] = supertrend
 
+
+# =========================
+# EMA200
+# =========================
+
+ema200 = close.ewm(span=200, adjust=False).mean()
+
+# =========================
+# Purple Cloud Parameters
+# =========================
+
+x1 = 40
+alpha = 0.9
+
+# =========================
+# ATR(40) * Alpha
+# =========================
+
+atr40 = tr.rolling(x1).mean()
+
+x2 = atr40 * alpha
+
+xh = close + x2
+xl = close - x2
+
+# =========================
+# Purple Cloud VWMA Logic
+# =========================
+
+volume = btc["Volume"]
+
+len1 = int(np.ceil(x1 / 4))
+len2 = int(np.ceil(x1 / 2))
+
+# Pine:
+# a1 = vwma(hl2*volume,len1)/vwma(volume,len1)
+
+hl2 = (high + low) / 2
+
+a1_num = (hl2 * volume).rolling(len1).sum()
+a1_den = volume.rolling(len1).sum()
+
+a1 = a1_num / a1_den
+
+a2_num = (hl2 * volume).rolling(len2).sum()
+a2_den = volume.rolling(len2).sum()
+
+a2 = a2_num / a2_den
+
+a3 = 2 * a1 - a2
+
+# a4 = vwma(a3,40)
+
+a4_num = (a3 * volume).rolling(x1).sum()
+a4_den = volume.rolling(x1).sum()
+
+a4 = a4_num / a4_den
+
+# =========================
+# b1
+# =========================
+
+b1 = close.ewm(alpha=(1 / x1), adjust=False).mean()
+
+# =========================
+# a5
+# =========================
+
+a5 = (2 * a4 * b1) / (a4 + b1)
+
 # =========================
 # Output
 # =========================
@@ -116,3 +186,8 @@ print("Direction:", int(direction.iloc[-1]))
 print("Supertrend:", round(supertrend.iloc[-1], 2))
 print("Final Upper:", round(final_upper.iloc[-1], 2))
 print("Final Lower:", round(final_lower.iloc[-1], 2))
+
+print("EMA200:", round(ema200.iloc[-1], 2))
+print("ATR40:", round(atr40.iloc[-1], 2))
+print("a5:", round(a5.iloc[-1], 2))
+print("b1:", round(b1.iloc[-1], 2))
