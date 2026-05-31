@@ -401,4 +401,16 @@ if new_signal:
 
     print("Telegram alert sent")
 
-#hehe
+with open("signal_state.json", "w") as f:
+    json.dump(
+        {
+            "last_signal": latest_signal,
+            "last_timestamp": str(latest_timestamp)
+        },
+        f,
+        indent=2
+    )
+
+print("State file updated")
+
+
