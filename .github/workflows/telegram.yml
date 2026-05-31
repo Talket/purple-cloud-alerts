@@ -13,7 +13,7 @@ jobs:
 send-message:
 runs-on: ubuntu-latest
 
-```
+
 steps:
   - name: Checkout repository
     uses: actions/checkout@v4
@@ -45,4 +45,3 @@ steps:
 
   - name: Push changes
     run: git push
-```
